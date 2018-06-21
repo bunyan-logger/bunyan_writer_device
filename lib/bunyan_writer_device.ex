@@ -93,6 +93,10 @@ defmodule Bunyan.Writer.Device do
 
   @server __MODULE__.Server
 
+  def child_spec(config) do
+    Supervisor.child_spec({ @server, config }, [])
+  end
+
   @doc """
   Update the configuration parameters associated with this device. Some
   configuration changes (such as compile-time log level) will have no effect.
