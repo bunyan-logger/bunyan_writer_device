@@ -1,5 +1,11 @@
 defmodule Bunyan.Writer.Device do
 
+  @server __MODULE__.Server
+
+  use Bunyan.Shared.Writable, server_module: @server
+
+  alias Bunyan.Shared.LogMsg
+
   @moduledoc """
   Write log messages to an IO device. We operate as a separate process
   to allow the rest to continue asynchronously.
@@ -7,8 +13,8 @@ defmodule Bunyan.Writer.Device do
   By default, we log to `:user`, but this can be changed both in the
   static configuration (by setting `device:` to an atom that names an IO device,
   or to a string that will be the name of a file), or by updating the
-  configuration at runtime (using `update_configuraation/2) or
-  `set_log_device/2`.
+  configuration at runtime (using `update_configuration/2` or
+  `set_log_device/2`).
 
   ### Formatting Log Messages
 
@@ -91,11 +97,17 @@ defmodule Bunyan.Writer.Device do
   @type name :: atom()   | pid()
   @type t    :: binary() | name()
 
-  @server __MODULE__.Server
 
-  def child_spec(config) do
-    Supervisor.child_spec({ @server, config }, [])
+
+  @doc """
+  Write the log message to the current device.
+  """
+  @spec write_log_message(device :: atom() | name, msg :: LogMsg.t) :: any
+
+  def write_log_message(device, message) do
+    GenServer.cast(device, { :log_message, message })
   end
+
 
   @doc """
   Update the configuration parameters associated with this device. Some
@@ -104,7 +116,7 @@ defmodule Bunyan.Writer.Device do
   The first parameter is the name associated with this device.
   """
 
-  @spec update_configuration(name :: atom(), new_config :: keyword()) :: any()
+  @spec update_configuration(name :: name, new_config :: keyword()) :: any()
 
   def update_configuration(name \\ @server, new_config) do
     GenServer.call(name, { :update_configuration, new_config })

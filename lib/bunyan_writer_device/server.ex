@@ -1,6 +1,7 @@
 defmodule Bunyan.Writer.Device.Server do
 
-  use GenServer
+  use Bunyan.Shared.WritableServer
+
   alias Bunyan.Writer.Device.{ Impl, State }
 
    @doc false
