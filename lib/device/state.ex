@@ -1,7 +1,7 @@
 defmodule Bunyan.Writer.Device.State do
 
-  alias Bunyan.Shared.Level
-  alias Bunyan.Writer.Device.{ Formatter, Impl }
+  alias Bunyan.Shared.{ Level, Options }
+  alias Bunyan.{ Formatter, Writer.Device.Impl }
 
   @debug Level.of(:debug)
   @info  Level.of(:info)
@@ -34,9 +34,9 @@ defmodule Bunyan.Writer.Device.State do
     },
     message_colors: %{
       @debug => faint(),
-      @info  => reset(),
+      @info  => green(),
       @warn  => yellow(),
-      @error => light_red() <> bright()
+      @error => light_red()
     },
 
     timestamp_color: faint(),
@@ -46,7 +46,9 @@ defmodule Bunyan.Writer.Device.State do
     use_ansi_color?:   true       # and this is (user_wants_color? && device supports it)
   )
 
-  def from_options(user_options, base \\ %__MODULE__{}) do
+  def from(user_options, base \\ %__MODULE__{}) do
+    import Options, only: [ maybe_add: 3,  maybe_add: 4]
+
     options = base
               |> maybe_add(user_options, :name)
               |> maybe_add(user_options, :device)
@@ -71,15 +73,6 @@ defmodule Bunyan.Writer.Device.State do
     )
 
     %{ options | format_function: function}
-  end
-
-  def maybe_add(config, options, key, internal_key \\ nil) do
-    case options[key] do
-      nil ->
-        config
-      value ->
-        Map.put(config, internal_key || key , value)
-    end
   end
 
   def maybe_update_colors(config, options, key) do

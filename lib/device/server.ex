@@ -1,19 +1,18 @@
 defmodule Bunyan.Writer.Device.Server do
 
-  use Bunyan.Shared.WritableServer
+  use GenServer
 
   alias Bunyan.Writer.Device.{ Impl, State }
 
    @doc false
+   #TODO: add name to all configs
    def start_link(options) do
-    name    = Keyword.get(options, :name, __MODULE__)
-    options = Keyword.put(options, :name, name)
-    GenServer.start_link(__MODULE__, options, name: name)
+    GenServer.start_link(__MODULE__, options, name: __MODULE__)
   end
 
   @doc false
   def init(options) do
-    { :ok, State.from_options(options) }
+    { :ok, options }
   end
 
   @doc false
@@ -35,7 +34,7 @@ defmodule Bunyan.Writer.Device.Server do
   @doc false
   def handle_call({ :update_configuration, new_config }, _, config) do
     flush_pending()
-    new_config = State.from_options(new_config, config)
+    new_config = State.from(new_config, config)
     { :reply, :ok,  new_config }
   end
 
