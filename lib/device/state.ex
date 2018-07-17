@@ -46,8 +46,23 @@ defmodule Bunyan.Writer.Device.State do
     use_ansi_color?:   true       # and this is (user_wants_color? && device supports it)
   )
 
+  @valid_options [
+    :name,
+    :device,
+    :pid_file_name,
+    :main_format_string,
+    :additional_format_string,
+    :timestamp_color,
+    :extra_color,
+    :use_ansi_color?,
+    :level_colors,
+    :mesage_colors,
+  ]
+
   def from(user_options, base \\ %__MODULE__{}) do
-    import Options, only: [ maybe_add: 3,  maybe_add: 4]
+    import Options
+
+    validate_legal_options(user_options, @valid_options, Bunyan.Writer.Device)
 
     options = base
               |> maybe_add(user_options, :name)
