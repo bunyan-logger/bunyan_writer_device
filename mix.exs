@@ -9,7 +9,6 @@ defmodule BunyanWriterDevice.MixProject do
   def project() do
     Build.project(
       :bunyan_writer_device,
-      "0.5.0",
       &deps/1,
       "The component that lets the  Bunyan distributed and pluggable logging system write to the console and to files"
     )
