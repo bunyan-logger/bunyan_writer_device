@@ -7,7 +7,7 @@ defmodule Bunyan.Writer.Device.Server do
    @doc false
    #TODO: add name to all configs
    def start_link(options) do
-    GenServer.start_link(__MODULE__, options, name: __MODULE__)
+    GenServer.start_link(__MODULE__, options, name: options.name)
   end
 
   @doc false
@@ -16,7 +16,7 @@ defmodule Bunyan.Writer.Device.Server do
   end
 
   @doc false
-  def handle_cast({ :log_message, msg}, options) do
+  def handle_cast({ :log_message, msg }, options) do
     Impl.write_to_device(options, msg)
     { :noreply, options }
   end
@@ -24,6 +24,7 @@ defmodule Bunyan.Writer.Device.Server do
   def handle_cast(x, options) do
     raise inspect handle_cast: { x, options }
   end
+
   @doc false
   def handle_call({ :set_log_device, device }, _, options) do
     flush_pending()
@@ -44,6 +45,7 @@ defmodule Bunyan.Writer.Device.Server do
   end
 
   def terminate(_, options) do
+    IO.inspect "TERMINATE #{inspect options}"
     Impl.close_log_device(options)
     :ignored_return_value
   end

@@ -28,6 +28,7 @@ defmodule Bunyan.Writer.Device.SignalHandler do
   end
 
   def handle_event(other, options) do
+    IO.inspect signal: other
     :erl_signal_handler.handle_event(other, options)
   end
 
