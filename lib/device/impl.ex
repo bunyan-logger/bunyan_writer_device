@@ -4,7 +4,7 @@ defmodule Bunyan.Writer.Device.Impl do
 
   @doc false
   def write_to_device(options, msg) do
-    IO.write(options.device_pid, options.format_function.(msg))# |> List.flatten |> Enum.join)
+    IO.write(options.device_pid, options.format_function.(msg))
   end
 
   @doc false
