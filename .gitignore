@@ -28,3 +28,4 @@ test_pid
 
 /.elixir_ls/
 .formatter.exs
+mix.lock
